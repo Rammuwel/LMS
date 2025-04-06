@@ -30,8 +30,8 @@ function App() {
            <Route path='/player/:courseId' element={<Player/>} />
            <Route path='/loading/:path' element={<Loading/>} />
            <Route path='/educator' element={<Educator/>}>
-               <Route path='add-course'  element={AddCourse}/>
-               <Route path='my-courses'  element={MyCourses}/>
+               <Route path='add-course'  element={<AddCourse/>}/>
+               <Route path='my-courses'  element={<MyCourses/>}/>
                <Route path='students-enrolled'  element={<StudentsEnrolled/>}/>
                <Route path='educator'  element={<Dashboard/>}/>
            </Route>
