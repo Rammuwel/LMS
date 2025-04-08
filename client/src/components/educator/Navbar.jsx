@@ -15,9 +15,8 @@ function Navbar() {
          </Link>
         <div className='flex item-center gap-5 text-gray-500 relative'>
           <p>Hi! {user ? user.fullName : 'developers'}</p>
-            {user? <UserButton/>:<img className='max-w-8' src={assets.profile_img}/>}
-        </div> 
-        
+            { user ? <UserButton/>:<img className='max-w-8' src={assets.profile_img}/>}
+        </div>      
     </div>
   )
 }

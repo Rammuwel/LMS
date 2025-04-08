@@ -51,13 +51,11 @@ function CourseDetails() {
             <h1 className='md:text-4x md:li  text-3xl font-semibold to-gray-800'>{courseData.courseTitle}</h1>
             <p dangerouslySetInnerHTML={{ __html: courseData.courseDescription.slice(0, 200) }} className=''></p>
 
-
             {/* review and ratting */}
-            <div className='flex items-center space-x-2 pt-3 text-sm pb-1'>
+            <div className='flex items-center flex-wrap space-x-2 pt-3 text-sm pb-1'>
               <p>{calculateRating(courseData)}</p>
               <div className='flex'>
                 {[...Array(5)].map((_, i) => (<img key={i} src={i < Math.floor(calculateRating(courseData)) ? assets.star : assets.star_blank} alt="star" className='w-3.5 h-3.5' />))}
-
               </div>
               <p className='text-blue-500'>{courseData.courseRatings.length}{courseData.courseRatings.length > 1 ? ' ratings,' : ' rating,'}</p>
               <p>{courseData.enrolledStudents.length}{courseData.enrolledStudents.length > 1 ? '  students,' : ' student,'}</p>
@@ -124,7 +122,7 @@ function CourseDetails() {
                 
                 <p className='text-red-500'><span className='font-medium'>5 days</span> left at this price!</p>
               </div>
-              <div className='flex items-center gap-2'>
+              <div className='flex items-center gap-2 '>
                 <p className='text-2xl md:text-4xl  font-semibold text-gray-800'>{currency } {(courseData.coursePrice - courseData.discount * courseData.coursePrice / 100).toFixed(2)}</p>
                 <p className='md:text-lg text-gray-500 line-through'>{currency} {courseData.coursePrice}</p>
                 <p className='md:text-lg text-gray-500 '>{currency} {courseData.discount}% off</p>
@@ -148,7 +146,7 @@ function CourseDetails() {
               </div>
               <button
               className='md:mt-6 mt-4 w-full py-3 rounded bg-blue-600 text-white font-medium' 
-              >{isEnrolled?'Already Endrolled': 'Enroll Now'}</button>
+              >{isEnrolled? 'Already Endrolled' : 'Enroll Now'}</button>
 
               <div className='pt-6'>
                 <p>What's in the course</p>
