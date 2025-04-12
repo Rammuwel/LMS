@@ -72,7 +72,7 @@ export const purchaseCourse = async (req, res) => {
                     product_data: {
                         name: courseData.courseTitle
                     },
-                    unit_amount: Math.floor(newPurchase.amount) * 100,
+                    unit_amount: Math.floor(newPurchase.amount) * 100
 
                 },
                 quantity: 1
