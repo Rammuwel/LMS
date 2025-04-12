@@ -66,20 +66,22 @@ export const clerkWebhooks = async (req, res) => {
 const stripeInstance = new Stripe(process.env.STRIPE_SECRETE_KEY)
 
 export const stripeWebhooks = async (request, response) => {
+   
     const sig = request.headers['stripe-signature'];
 
     let event;
 
     try {
-        event = Stripe.webhooks.constructEvent(request.body, sig, process.env.STRIPE_WEBHOOK_SECRETE);
+        event = stripeInstance.webhooks.constructEvent(request.body, sig, process.env.STRIPE_WEBHOOK_SECRETE);
     }
     catch (err) {
-        response.status(400).send(`Webhook Error: ${err.message}`);
+       return response.status(400).send(`Webhook Error: ${err.message}`);
     }
 
     // Handle the event
     switch (event.type) {
         case 'payment_intent.succeeded':{
+           
             const paymentIntent = event.data.object;
             const paymentIntentId = paymentIntent.id;
 
@@ -88,6 +90,9 @@ export const stripeWebhooks = async (request, response) => {
             });
 
             const {purchaseId} = session.data[0].metadata;
+            if (!session.data.length) {
+                return response.status(400).send("No session found for this payment intent");
+            }
             const purchaseData = await Purchase.findById(purchaseId);
 
             const userData = await User.findById(purchaseData.userId);
@@ -116,6 +121,9 @@ export const stripeWebhooks = async (request, response) => {
             });
 
             const {purchaseId} = session.data[0].metadata;
+            if (!session.data.length) {
+                return response.status(400).send("No session found for this payment intent");
+            }
             const purchaseData = await Purchase.findById(purchaseId);
 
              purchaseData.status = 'failed';

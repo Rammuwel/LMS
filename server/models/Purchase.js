@@ -4,7 +4,7 @@ const purchaseSchema = new mongoose.Schema({
     courseId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Course',
-        require: true
+        required: true
     },
     userId: {
         type: String,
@@ -15,7 +15,7 @@ const purchaseSchema = new mongoose.Schema({
     status: {type:String, enum: ['pending', 'completed', 'failed'], default:'pending'},
 
 
-}, {timeseries:true});
+}, {timestamps:true});
 
 
 export const Purchase = mongoose.model('Purchase', purchaseSchema);
