@@ -2,6 +2,7 @@ import {clerkClient} from '@clerk/express'
 import Course from '../models/Course.js'
 import {v2 as cloudinary} from 'cloudinary'
 import { Purchase } from '../models/Purchase.js';
+import User from '../models/User.js'
 
 
 // update role to educator
@@ -28,6 +29,8 @@ export const updateRoleToEducator = async (req, res)=>{
 
 // add new course
 export const addCourse = async (req, res)=>{
+
+   
   try {
     
     const {courseData} = req.body;
@@ -42,6 +45,7 @@ export const addCourse = async (req, res)=>{
    parsedCourseData.educator = educatorId
 
    const newCourse = await Course.create(parsedCourseData);
+
    const imageUpload = await cloudinary.uploader.upload(imageFile.path);
    
    newCourse.courseThumbnail = imageUpload.secure_url;
@@ -89,7 +93,7 @@ export const educatorDashboardData = async (req, res)=>{
       
      const enrolledStudentsData = [];
      
-     for(const course of courseData){
+     for(const course of courses){
        const students = await User.find({
         _id:{$in: course.enrolledStudentsData}
        }, 'name imageUrl');
@@ -126,13 +130,13 @@ export const getEnrolledStudentsData = async (req, res)=>{
       status: 'completed'
      }).populate('userID', 'name imageUrl').populate('courseId', 'courseTitle')
 
-     const endrolledStudents = purchases.map(purchase=>({
+     const enrolledStudents = purchases.map(purchase=>({
       student: purchase.userId,
       courseTitle: purchase.courseId.courseTitle,
       purchaseDate: purchase.createdAt,
      }))
 
-    res.json({success: true, endrolledStudents})
+    res.json({success: true, enrolledStudents})
   } catch (error) {
     res.json({success: false, message: error.message})
   }

@@ -28,7 +28,7 @@ app.get('/', (req, res)=>{
     res.send("hellow jee kaise ho app")
 });
 app.post('/clerk', express.json(), clerkWebhooks);
-app.use('/api/educatore', express.json(), educatorRouter);
+app.use('/api/educator', express.json(), educatorRouter);
 app.use('/api/course', express.json(), courseRouter);
 app.use('/api/user', express.json(), userRouter);
 app.post('/stripe', express.raw({ type: 'application/json' }),  stripeWebhooks)

@@ -1,10 +1,14 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import uniqid from 'uniqid'
 import Quill from 'quill'
 import { assets } from '../../assets/assets';
+import {AppContext} from '../../context/AppContext'
+import { toast } from 'react-toastify';
+import axios from 'axios';
 
 
 function AddCourse() {
+  const {backendUrl, getToken} = useContext(AppContext)
 const quillRef = useRef(null);
 const editorRef = useRef(null);
 
@@ -47,7 +51,7 @@ const [lectureDetails, setLectureDetails] = useState(
    }else if(action === 'toggle'){
   
     setChapters( chapters.map((chapter) => chapter.chapterId === chapterId ? {...chapter, collapsed : !chapter.collapsed} : chapter))
-    console.log(chapters);
+ 
    }
  }
 
@@ -94,8 +98,52 @@ const addLecture = ()=>{
   });
 };
 
-const handleSubmit = (e)=>{
+const handleSubmit = async (e)=>{
   e.preventDefault();
+
+  try {
+    if(!image){
+      toast.error('thumbnail not selected')
+    }
+
+    const courseData = {
+      courseTitle,
+      courseDescription: quillRef.current.root.innerHTML,
+      coursePrice: Number(coursePrice),
+      discount: Number(discount),
+      courseContent: chapters,
+      isPublished: true, 
+    }
+
+    const formData = new FormData();
+    formData.append('courseData', JSON.stringify(courseData))
+    formData.append('image', image)
+
+     const token = await getToken()
+     
+     const {data} = await axios.post(backendUrl + '/api/educator/add-course',
+      formData,
+    {headers:{Authorization: `Bearer ${token}`}} )
+
+    if(data.success){
+       toast.success(data.message)
+       setCourseTitle('')
+       setCoursePrice(0)
+       setDiscount(0)
+       setImage(null)
+       setChapters([])
+       quillRef.current.root.innerHTML = ''
+
+    }else{
+      toast.error(data.message)
+      
+    }
+
+  } catch (error) { 
+    toast.error(error.message)
+
+    
+  }
 }
 
  useEffect(()=>{
@@ -136,7 +184,7 @@ const handleSubmit = (e)=>{
                   <label htmlFor="thumbnail" className='flex items-center gap-3'>
                     <img src={assets.file_upload_icon} alt="" className='p-3 bg-blue-500 rounded'/>
                     <input type="file"id='thumbnail' onChange={e=>setImage(e.target.files[0])} accept='image/*' hidden/>
-                    <img src={image?URL.createObjectURL(image):''} className='max-h-10' alt="" />   
+                    <img src={image ? URL.createObjectURL(image): null} className='max-h-10' alt="" />   
                   </label>
                </div>
           </div>
@@ -164,7 +212,7 @@ const handleSubmit = (e)=>{
                       <div className='p-4'>
                           {
                             chapter.chapterContent.map((lecture, lectureIndex)=>(
-                              <div className='flex justify-between items-center mb-2'>
+                              <div key={lectureIndex} className='flex justify-between items-center mb-2'>
                                  <span>{lectureIndex+1} {lecture.lectureTitle} - {lecture.lectureDuration} mins - <a href={lecture.lectureUrl}
                                   target='_blank' className='text-blue-500'>Link</a> - {lecture.isPreviewFree?'Free Preview':'paid'}</span>
                                   <img  onClick={()=>handleLecture('remove', chapter.chapterId, lectureIndex)} src={assets.cross_icon} alt=""  className='cursor-pointer'/>
@@ -222,7 +270,7 @@ const handleSubmit = (e)=>{
                           <input type="checkbox"
                           className='mt-1 scale-125'
                           value={lectureDetails.lectureUrl}
-                          onChange={(e)=>setLectureDetails({...lectureDetails, lectureUrl: e.target.value})}
+                          onChange={(e)=>setLectureDetails({...lectureDetails, isPreviewFree: e.target.checked})}
                           />                                                                                       
                        </div>
 

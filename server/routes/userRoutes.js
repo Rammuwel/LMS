@@ -6,7 +6,7 @@ const userRouter = express.Router();
 
 
 userRouter.get('/data', getUserData);
-userRouter.get('/endrolled-course', userEndrolledCourse);
+userRouter.get('/enrolled-courses', userEndrolledCourse);
 userRouter.post('/purchase', purchaseCourse);
 
 userRouter.post('/update-course-progress', updateUserCourseProgress);
